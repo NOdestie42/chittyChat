@@ -1,59 +1,51 @@
-"use client";
+"use client"
 
-import { Sticker, SendHorizonal, Paperclip, Mic, Image as ImageIcon } from 'lucide-react';
-import React, { useState, useRef, useEffect } from 'react';
-import EmojiPicker from 'emoji-picker-react';
+import { Sticker, SendHorizonal, Paperclip, Mic, Image as ImageIcon } from 'lucide-react'
+import React, { useState, useRef } from 'react'
+import EmojiPicker from 'emoji-picker-react'
+import { useClickOutside } from '@/hooks/useClickOutside'
 
 const SendMessage = () => {
-    const [message, setMessage] = useState('');
-    const [showPicker, setShowPicker] = useState(false);
-    const [isRecording, setIsRecording] = useState(false);
-    const [showAttachments, setShowAttachments] = useState(false);
-    const pickerRef = useRef<HTMLDivElement | null>(null);
-    const attachmentRef = useRef<HTMLDivElement | null>(null);
+  const [message, setMessage] = useState('')
+  const [showPicker, setShowPicker] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
+  const [showAttachments, setShowAttachments] = useState(false)
 
-    const onEmojiClick = (emojiData: any) => {
-        setMessage((prev) => prev + emojiData.emoji);
-        setShowPicker(false);
-    };
+  const pickerRef = useRef<HTMLDivElement | null>(null)
+  const attachmentRef = useRef<HTMLDivElement | null>(null)
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
-            setShowPicker(false);
-        }
-        if (attachmentRef.current && !attachmentRef.current.contains(event.target as Node)) {
-            setShowAttachments(false);
-        }
-    };
+  // Close dropdowns when clicking outside
+  useClickOutside(
+    [pickerRef, attachmentRef],
+    () => {
+      setShowPicker(false)
+      setShowAttachments(false)
+    },
+    showPicker || showAttachments
+  )
 
-    useEffect(() => {
-        if (showPicker || showAttachments) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [showPicker, showAttachments]);
+  const onEmojiClick = (emojiData: any) => {
+    setMessage((prev) => prev + emojiData.emoji)
+    setShowPicker(false)
+  }
 
-    const handleSend = () => {
-        if (!message.trim()) return;
-        console.log('Send message:', message);
-        setMessage('');
-    };
+  const handleSend = () => {
+    if (!message.trim()) return
+    console.log('Send message:', message)
+    setMessage('')
+  }
 
-    const handleVoiceRecord = () => {
-        setIsRecording(!isRecording);
-        // Voice recording logic would go here
-    };
+  const handleVoiceRecord = () => {
+    setIsRecording(!isRecording)
+    // Voice recording logic would go here
+  }
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-        }
-    };
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
 
     return (
         <div className='relative w-full'>

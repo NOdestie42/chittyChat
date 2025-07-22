@@ -1,15 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
-
-interface AvatarProps {
-  src: string
-  alt: string
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-  status?: 'online' | 'away' | 'offline' | 'busy'
-  showStatus?: boolean
-  className?: string
-  onClick?: () => void
-}
+import { cn, getStatusColor } from '@/lib/utils'
+import { AvatarProps } from '@/types'
 
 const Avatar: React.FC<AvatarProps> = ({
   src,
@@ -17,7 +9,7 @@ const Avatar: React.FC<AvatarProps> = ({
   size = 'md',
   status,
   showStatus = false,
-  className = '',
+  className,
   onClick
 }) => {
   const sizeClasses = {
@@ -26,13 +18,6 @@ const Avatar: React.FC<AvatarProps> = ({
     md: 'w-12 h-12',
     lg: 'w-16 h-16',
     xl: 'w-20 h-20'
-  }
-
-  const statusColors = {
-    online: 'bg-green-500',
-    away: 'bg-yellow-500',
-    offline: 'bg-gray-400',
-    busy: 'bg-red-500'
   }
 
   const statusSizes = {
@@ -44,9 +29,13 @@ const Avatar: React.FC<AvatarProps> = ({
   }
 
   return (
-    <div className={`relative inline-block ${className}`}>
-      <div 
-        className={`${sizeClasses[size]} rounded-full overflow-hidden ring-2 ring-transparent hover:ring-primary/30 transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
+    <div className={cn('relative inline-block', className)}>
+      <div
+        className={cn(
+          sizeClasses[size],
+          'rounded-full overflow-hidden ring-2 ring-transparent hover:ring-primary/30 transition-all duration-300',
+          onClick && 'cursor-pointer'
+        )}
         onClick={onClick}
       >
         <Image
@@ -57,11 +46,16 @@ const Avatar: React.FC<AvatarProps> = ({
           className="w-full h-full object-cover"
         />
       </div>
-      
+
       {showStatus && status && (
-        <div 
-          className={`absolute -bottom-0.5 -right-0.5 ${statusSizes[size]} ${statusColors[status]} rounded-full border-2 border-white ${status === 'online' ? 'animate-pulse' : ''}`}
-        ></div>
+        <div
+          className={cn(
+            'absolute -bottom-0.5 -right-0.5 rounded-full border-2 border-white',
+            statusSizes[size],
+            getStatusColor(status),
+            status === 'online' && 'animate-pulse'
+          )}
+        />
       )}
     </div>
   )
