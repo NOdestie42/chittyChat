@@ -1,27 +1,41 @@
-import Image from 'next/image'
 import React from 'react'
+import { MOCK_USERS } from '@/constants'
+import { User } from '@/types'
+import UserListItem from '@/components/ui/user-list-item'
 
 const Users = () => {
-    return (
-        <div className="py-8 px-2">
-            <div className="flex items-center space-x-3">
-                <Image
-                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="User avatar"
-                    width={48}
-                    height={48}
-                    className="rounded-full object-cover object-top w-12 max-h-10"
-                />
-                <div className='w-full'>
-                    <div className="flex items-center justify-between w-full">
-                        <div className="font-semibold text-gray-900">John Doe</div>
-                        <div className="text-xs">2 min ago</div>
-                    </div>
-                    <div className="text-sm text-gray-500">Online</div>
-                </div>
-            </div>
-        </div>
-    )
+  const handleUserClick = (user: User) => {
+    console.log('User clicked:', user.name)
+    // Handle user selection logic here
+  }
+
+  return (
+    <div className="py-4">
+      <div className="px-4 mb-4">
+        <h3 className="text-sm font-semibold text-base-content/70 uppercase tracking-wider">
+          Conversations
+        </h3>
+      </div>
+
+      <div className="space-y-2">
+        {MOCK_USERS.map((user, index) => (
+          <UserListItem
+            key={user.id}
+            user={user}
+            index={index}
+            onUserClick={handleUserClick}
+          />
+        ))}
+      </div>
+
+      {/* Add contact button */}
+      <div className="px-4 mt-6">
+        <button className="w-full glass rounded-xl py-3 px-4 text-center hover:bg-white/20 transition-all duration-300 border border-white/20">
+          <span className="text-sm font-medium">+ Add New Contact</span>
+        </button>
+      </div>
+    </div>
+  )
 }
 
 export default Users

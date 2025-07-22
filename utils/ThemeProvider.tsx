@@ -1,48 +1,40 @@
 'use client'
 
-import { createContext, useState, ReactNode, useContext } from "react";
-import { useEffect } from "react";
+import { createContext, ReactNode, useContext } from "react"
+import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { ThemeType } from '@/types'
 
-type ThemeContextType = {
-    theme: string;
-    setTheme: (theme: string) => void;
-};
-
+interface ThemeContextType {
+  theme: ThemeType | string
+  setTheme: (theme: ThemeType | string) => void
+}
 
 const ThemeContext = createContext<ThemeContextType>({
-    theme: '',
-    setTheme: () => { },
-});
+  theme: '',
+  setTheme: () => {},
+})
 
-export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-    const [theme, setTheme] = useState('');
-    useEffect(() => {
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme) {
-            setTheme(storedTheme);
-        }
-        const handleStorage = (event: StorageEvent) => {
-            if (event.key === 'theme' && event.newValue) {
-                setTheme(event.newValue);
-            }
-        };
-        window.addEventListener('storage', handleStorage);
-        return () => {
-            window.removeEventListener('storage', handleStorage);
-        };
-    }, []);
+interface ThemeProviderProps {
+  children: ReactNode
+  defaultTheme?: ThemeType | string
+}
 
-    useEffect(() => {
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-    return (
-        <ThemeContext.Provider value={{ theme, setTheme }}>
-            <div data-theme={theme}>
-                {children}
-            </div>
-        </ThemeContext.Provider>
-    );
-};
+export const ThemeProvider = ({ children, defaultTheme = 'dark' }: ThemeProviderProps) => {
+  const [theme, setTheme] = useLocalStorage<ThemeType | string>('theme', defaultTheme)
 
-// Custom hook for easier usage
-export const useTheme = () => useContext(ThemeContext);
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      <div data-theme={theme}>
+        {children}
+      </div>
+    </ThemeContext.Provider>
+  )
+}
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext)
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider')
+  }
+  return context
+}

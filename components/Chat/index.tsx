@@ -1,42 +1,42 @@
 import React from 'react'
+import { MOCK_MESSAGES } from '@/constants'
+import ChatBubble from '@/components/ui/chat-bubble'
+import Avatar from '@/components/ui/avatar'
 
 const ChatComp = () => {
-    return (
-        <div className='h-full p-2'>
-            <div className="chat chat-start">
-                <div className="chat-image avatar">
-                    <div className="w-8 rounded-full">
-                        <img
-                            alt="Tailwind CSS chat bubble component"
-                            src="https://img.daisyui.com/images/profile/demo/kenobee@192.webp"
-                        />
-                    </div>
-                </div>
-                <div className="chat-header">
-                    Obi-Wan Kenobi
-                    <time className="text-xs opacity-50">12:45</time>
-                </div>
-                <div className="chat-bubble text-sm">You were the Chosen One!</div>
-                <div className="chat-footer opacity-50">Delivered</div>
-            </div>
-            <div className="chat chat-end">
-                <div className="chat-image avatar">
-                    <div className="w-8 rounded-full">
-                        <img
-                            alt="Tailwind CSS chat bubble component"
-                            src="https://img.daisyui.com/images/profile/demo/anakeen@192.webp"
-                        />
-                    </div>
-                </div>
-                <div className="chat-header">
-                    Anakin
-                    <time className="text-xs opacity-50">12:46</time>
-                </div>
-                <div className="chat-bubble text-sm">I hate you!</div>
-                <div className="chat-footer opacity-50">Seen at 12:46</div>
-            </div>
+
+  return (
+    <div className='h-full p-4 custom-scrollbar overflow-y-auto'>
+      <div className="space-y-4">
+        {MOCK_MESSAGES.map((message, index) => (
+          <ChatBubble
+            key={message.id}
+            message={message}
+            index={index}
+          />
+        ))}
+      </div>
+
+      {/* Typing indicator */}
+      <div className="chat chat-start mt-4 opacity-70">
+        <div className="chat-image avatar">
+          <Avatar
+            src="https://img.daisyui.com/images/profile/demo/kenobee@192.webp"
+            alt="Typing user"
+            size="sm"
+          />
         </div>
-    )
+        <div className="chat-bubble glass border border-white/20 flex items-center gap-1">
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+            <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          </div>
+          <span className="text-xs ml-2">typing...</span>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default ChatComp
